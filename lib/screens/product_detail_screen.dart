@@ -11,7 +11,13 @@ class ProductDetailScreen extends StatelessWidget {
 
     // Getting details of particular id
     //accessing provider of products having getter items by filtering out with matching id
-    final loadedProduct = Provider.of<Products>(context).findById(id);
+    final loadedProduct = Provider.of<Products>(
+      context,
+      listen: false,
+      //we don't wanna rebuild this screen
+      //in case if we add a new product
+      //so we set to false the listen argument
+    ).findById(id);
     return Scaffold(
       appBar: AppBar(
         title: Text(loadedProduct.title),
