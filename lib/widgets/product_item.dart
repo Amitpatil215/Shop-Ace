@@ -6,7 +6,9 @@ import '../screens/product_detail_screen.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final eachProduct = Provider.of<Product>(context);
+    //This is old way we using earlier
+    //we not listening here cause we want title only once
+    final eachProduct = Provider.of<Product>(context, listen: false);
 
     return GestureDetector(
       onTap: () {
@@ -28,14 +30,23 @@ class ProductItem extends StatelessWidget {
               eachProduct.title,
               textAlign: TextAlign.center,
             ),
-            leading: IconButton(
-              icon: Icon(
-                eachProduct.isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: Theme.of(context).accentColor,
+            //alternative way of using listener as Consumer
+            //it will only run on its returned and child widgets
+            //rather than running over complete build
+            leading: Consumer<Product>(
+              builder: (ctx, eachProduct, child) => IconButton(
+                //here we getting a child
+                //it used in case if you don't want to rebuild that widget
+                icon: Icon(
+                  eachProduct.isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: Theme.of(context).accentColor,
+                ),
+                onPressed: () {
+                  eachProduct.toggleFavoriteStatus();
+                },
               ),
-              onPressed: () {
-                eachProduct.toggleFavoriteStatus();
-              },
             ),
             trailing: IconButton(
               icon: Icon(
