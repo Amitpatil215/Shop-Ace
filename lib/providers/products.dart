@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../models/product.dart';
+import 'product.dart';
 
 //mix in use with keyword
 // We getting features all the features of ChangeNotifier
