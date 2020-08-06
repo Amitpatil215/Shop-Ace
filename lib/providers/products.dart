@@ -53,6 +53,10 @@ class Products with ChangeNotifier {
     // returning it as a copy made by []
   }
 
+  List<Product> get favoriteItems {
+    return _items.where((element) => element.isFavorite).toList();
+  }
+
   //This class used by provider package
   //so it will create communication channel between data and widget
   //who want to access data
