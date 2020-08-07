@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
 
@@ -9,7 +10,7 @@ class ProductItem extends StatelessWidget {
     //This is old way we using earlier
     //we not listening here cause we want title only once
     final eachProduct = Provider.of<Product>(context, listen: false);
-
+    final cart = Provider.of<Cart>(context, listen: false);
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -53,7 +54,13 @@ class ProductItem extends StatelessWidget {
                 Icons.shopping_cart,
                 color: Theme.of(context).accentColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(
+                  eachProduct.id,
+                  eachProduct.price,
+                  eachProduct.title,
+                );
+              },
             ),
           ),
         ),
