@@ -48,6 +48,12 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  //for removing item from cart screen
+  void removeItem(String dismissKey) {
+    _items.remove(dismissKey);
+    notifyListeners();
+  }
+
   //getter for how many items added in cart
   int get cartItemCount {
     return _items.length;

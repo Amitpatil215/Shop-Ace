@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart.dart';
 
 class CartItem extends StatelessWidget {
   final String id;
   final double price;
   final int quantity;
   final String title;
+  final String dismissKey;
 
   const CartItem({
     this.id,
     this.price,
     this.quantity,
     this.title,
+    this.dismissKey,
   });
   @override
   Widget build(BuildContext context) {
@@ -18,6 +22,9 @@ class CartItem extends StatelessWidget {
       key: ValueKey(id),
       // * Swiping from right to left allowed only
       direction: DismissDirection.endToStart,
+      onDismissed: (swipeDirection) {
+        Provider.of<Cart>(context, listen: false).removeItem(dismissKey);
+      },
       background: Container(
         padding: EdgeInsets.only(right: 20),
         alignment: Alignment.centerRight,
