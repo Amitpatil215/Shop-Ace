@@ -14,25 +14,44 @@ class CartItem extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 4,
+    return Dismissible(
+      key: ValueKey(id),
+      // * Swiping from right to left allowed only
+      direction: DismissDirection.endToStart,
+      background: Container(
+        padding: EdgeInsets.only(right: 20),
+        alignment: Alignment.centerRight,
+        child: Icon(
+          Icons.delete,
+          size: 40,
+          color: Colors.white,
+        ),
+        color: Theme.of(context).errorColor,
+        margin: EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 4,
+        ),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(5),
-        child: ListTile(
-          leading: CircleAvatar(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FittedBox(
-                child: Text("\$$price"),
+      child: Card(
+        margin: EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 4,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(5),
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FittedBox(
+                  child: Text("\$$price"),
+                ),
               ),
             ),
+            title: Text(title),
+            subtitle: Text("Total :\$${price * quantity}"),
+            trailing: Text("$quantity  X"),
           ),
-          title: Text(title),
-          subtitle: Text("Total :\$${price * quantity}"),
-          trailing: Text("$quantity  X"),
         ),
       ),
     );
