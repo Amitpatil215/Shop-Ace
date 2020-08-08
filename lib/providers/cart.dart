@@ -54,6 +54,12 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  // By placing order we have to clear cart
+  void clearCart() {
+    _items = {};
+    notifyListeners();
+  }
+
   //getter for how many items added in cart
   int get cartItemCount {
     return _items.length;
