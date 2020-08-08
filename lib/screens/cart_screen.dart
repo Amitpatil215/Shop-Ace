@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/orders.dart';
 
 // ! cartItem Clashing in both items
 //  as we only need Cart for our provider
@@ -42,8 +43,23 @@ class CartScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 4,
+                  ),
                   FlatButton(
-                    onPressed: () {},
+                    color: Colors.black12,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    onPressed: () {
+                      //Sending info to Orders
+                      Provider.of<Orders>(context, listen: false).addOrder(
+                        cart.items.values.toList(),
+                        cart.totalAmount,
+                      );
+                      //Clearing Cart items
+                      cart.clearCart();
+                    },
                     child: Text("Order Now"),
                   )
                 ],
