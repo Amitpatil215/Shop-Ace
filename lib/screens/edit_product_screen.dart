@@ -11,6 +11,16 @@ class EditProductScreen extends StatefulWidget {
 class _EditProductScreenState extends State<EditProductScreen> {
   // * For fucusing the form field Price
   final _priceFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    // We need to dispose all our
+    // ! Focus Nodes else they will cause memory leak
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +58,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 //for number keyboard
                 keyboardType: TextInputType.number,
                 focusNode: _priceFocusNode,
+                onFieldSubmitted: (enteredValue) {
+                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "Description",
+                ),
+                // For longer inputs
+                maxLines: 3,
+                keyboardType: TextInputType.multiline,
+                focusNode: _descriptionFocusNode,
               ),
             ],
           ),
