@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/edit_product_screen.dart';
 import '../providers/products.dart';
 import '../widgets/user_product_item.dart';
 import '../widgets/app_drawer.dart';
 
 class UserProductScreen extends StatelessWidget {
-  static const routName = '/user-products';
+  static const routName = '/user-product';
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
@@ -16,7 +17,7 @@ class UserProductScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              //..navigation to add product screen
+              Navigator.of(context).pushNamed(EditProductScreen.routName);
             },
           )
         ],
