@@ -65,6 +65,30 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
+  //For removing Single Item From Dart
+  void removeSingleItem(String productId) {
+    //weather it is a part of cart
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    //If it is greter than 1 then we need to remove it by 1
+    if (_items[productId].quantity > 1) {
+      _items.update(
+          productId,
+          (existingValue) => CartItem(
+                id: existingValue.id,
+                title: existingValue.title,
+                quantity: existingValue.quantity - 1,
+                price: existingValue.price,
+              ));
+    }
+    //If it equal to 1 then reomve entire item
+    if (_items[productId].quantity == 1) {
+      _items.remove(productId);
+      notifyListeners();
+    }
+  }
+
   //
   double get totalAmount {
     double total = 0;

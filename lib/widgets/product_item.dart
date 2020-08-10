@@ -60,6 +60,26 @@ class ProductItem extends StatelessWidget {
                   eachProduct.price,
                   eachProduct.title,
                 );
+                //If ther alredy Snack Bar exist on the screen
+                //then first remove the same
+                Scaffold.of(context).hideCurrentSnackBar();
+                //For Showing Snackbar
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    duration: Duration(seconds: 2),
+                    elevation: 5,
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    content: Text("Added Item to the cart"),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      textColor: Colors.white,
+                      onPressed: () {
+                        cart.removeSingleItem(eachProduct.id);
+                      },
+                    ),
+                  ),
+                );
               },
             ),
           ),
