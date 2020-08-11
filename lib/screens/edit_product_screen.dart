@@ -62,7 +62,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
-    _formKey.currentState.save();
+    // First validating user input
+    if (_formKey.currentState.validate()) {
+      // save the form
+      _formKey.currentState.save();
+    } else
+      return;
   }
 
   @override
@@ -104,6 +109,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     imageUrl: _editedProduct.imageUrl,
                   );
+                },
+                validator: (value) {
+                  if (value.isNotEmpty)
+                    return null;
+                  else
+                    return "Title can't be Empty";
                 },
               ),
               TextFormField(
