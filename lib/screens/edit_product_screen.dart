@@ -19,6 +19,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   // * We need gloabal key for interacting saveForm() method and form() widget
   final _formKey = GlobalKey<FormState>(); //it holds state of a form
+  // for validating image URL
+  var isImageUrlCorect = false;
   // Empty product
   var _editedProduct = Product(
     id: null,
@@ -56,7 +58,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // no need to press done(check in softKeyboard)
   void _updateImageUrl() {
     // negation of has focus is not in focus
-    if (!_imageUrlFocusNode.hasFocus) {
+    if (!_imageUrlFocusNode.hasFocus && isImageUrlCorect) {
+      //only if it is out of focus and image url is correct
       setState(() {});
     }
   }
@@ -138,6 +141,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     imageUrl: _editedProduct.imageUrl,
                   );
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Please enter a price.";
+                  }
+                  // try parse returns value if value is double type
+                  if (double.tryParse(value) == null) {
+                    return "Enter Valid Number";
+                  }
+                  if (double.parse(value) <= 0) {
+                    return "Please enter price greater than zero";
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -155,6 +171,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     imageUrl: _editedProduct.imageUrl,
                   );
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Please Enter a description";
+                  }
+                  if (value.length < 10) {
+                    return "Should be at least 10 character long";
+                  }
+                  return null;
                 },
               ),
               Row(
@@ -203,6 +228,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           imageUrl: value,
                         );
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Please provide image URL";
+                        }
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return "Enter Valid URL";
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpeg') &&
+                            !value.endsWith('.jpg')) {
+                          return "Not a Valid URL";
+                        }
+                        //true then only showing image preview
+                        isImageUrlCorect = true;
+                        return null;
                       },
                     ),
                   ),
