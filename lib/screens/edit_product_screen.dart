@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../providers/product.dart';
 
 //We want to manage user input so using statefulWidget
 class EditProductScreen extends StatefulWidget {
@@ -16,6 +17,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // as in form we dont need text editing controller it manages in backend
   //but we wanna show user preview of image before form get submitted
   final _imageUrlController = TextEditingController();
+  // * We need gloabal key for interacting saveForm() method and form() widget
+  final _formKey = GlobalKey<FormState>(); //it holds state of a form
+  // Empty product
+  var _editedProduct = Product(
+    id: null,
+    title: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+  );
 
   @override
   void initState() {
@@ -50,11 +61,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
+  void _saveForm() {
+    _formKey.currentState.save();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Product"),
+        actions: [
+          IconButton(icon: Icon(Icons.save), onPressed: _saveForm),
+        ],
       ),
       // ! One can also use Column wrapped in SingleChildScrollView
       // cause once our field exceeds boundries flutter will lose user data
@@ -63,6 +81,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Form(
+          key: _formKey,
           child: ListView(
             children: [
               TextFormField(
@@ -75,6 +94,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 //on pressing next button it will focus price form
                 onFieldSubmitted: (valueEntered) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    // only title value overwritten but other properties remains same
+                    id: _editedProduct.id,
+                    title: value,
+                    description: _editedProduct.description,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
                 },
               ),
               TextFormField(
@@ -89,6 +118,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (enteredValue) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: _editedProduct.id,
+                    title: _editedProduct.title,
+                    description: _editedProduct.description,
+                    price: double.parse(value),
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -98,6 +136,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: _editedProduct.id,
+                    title: _editedProduct.title,
+                    description: value,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -131,9 +178,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       ),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        _saveForm();
+                      },
                       //setting up editing controller
                       controller: _imageUrlController,
                       focusNode: _imageUrlFocusNode,
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: _editedProduct.id,
+                          title: _editedProduct.title,
+                          description: _editedProduct.description,
+                          price: _editedProduct.price,
+                          imageUrl: value,
+                        );
+                      },
                     ),
                   ),
                 ],
