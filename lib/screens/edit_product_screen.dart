@@ -12,6 +12,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // * For fucusing the form field Price
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
+  final _imageUrlFocusNode = FocusNode();
+  // as in form we dont need text editing controller it manages in backend
+  //but we wanna show user preview of image before form get submitted
+  final _imageUrlController = TextEditingController();
+
+  @override
+  void initState() {
+    // adding another lisener to focus node of an image
+    _imageUrlFocusNode.addListener(
+        //passing pointer of method
+        //as we wanna execute this function once focus changes
+        _updateImageUrl);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -19,7 +33,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
     // ! Focus Nodes else they will cause memory leak
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
+    _imageUrlFocusNode.dispose();
+    //removing listener before image controller
+    _imageUrlFocusNode.removeListener(_updateImageUrl);
+    _imageUrlController.dispose();
     super.dispose();
+  }
+
+  // when we change focus from image url input to other
+  // our image also get updated
+  // no need to press done(check in softKeyboard)
+  void _updateImageUrl() {
+    // negation of has focus is not in focus
+    if (!_imageUrlFocusNode.hasFocus) {
+      setState(() {});
+    }
   }
 
   @override
@@ -70,6 +98,45 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(
+                      top: 8,
+                      right: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    child: _imageUrlController.text.isEmpty
+                        ? Text(
+                            "Enter a URL",
+                            textAlign: TextAlign.center,
+                          )
+                        : FittedBox(
+                            child: Image.network(_imageUrlController.text),
+                            fit: BoxFit.cover),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Image URL',
+                      ),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      //setting up editing controller
+                      controller: _imageUrlController,
+                      focusNode: _imageUrlFocusNode,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
