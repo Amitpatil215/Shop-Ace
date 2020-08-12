@@ -81,6 +81,17 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateProduct(String id, Product updatedProduct) {
+    //We getting index of product which we wanna edit
+    final productIndex = _items.indexWhere((element) => element.id == id);
+    //checking did we really hot the index
+    if (productIndex >= 0) {
+    //replacing existing product with new product
+      _items[productIndex] = updatedProduct;
+      notifyListeners();
+    }
+  }
+
   Product findById(String id) {
     return _items.firstWhere((element) => element.id == id);
   }

@@ -24,6 +24,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // for validating image URL
   var isImageUrlCorect = false;
   // Empty product
+  var _isProductInitialized = false;
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -31,6 +32,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
     price: 0,
     imageUrl: '',
   );
+
+  // For a new product
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
 
   @override
   void initState() {
@@ -40,6 +49,38 @@ class _EditProductScreenState extends State<EditProductScreen> {
         //as we wanna execute this function once focus changes
         _updateImageUrl);
     super.initState();
+  }
+
+  //it runs befor build
+  @override
+  void didChangeDependencies() {
+    if (_isProductInitialized == false) {
+      //as didChangeDependencies runs multiple time we dont want to reinitialize our product
+      //so setting it to true
+      _isProductInitialized = true;
+      //getting id of a perticular product for editing
+      final editId = ModalRoute.of(context).settings.arguments as String;
+
+      // we dont have id means we want to create new product
+      if (editId == null) {
+      }
+      // if we got id that means we wanna edit existing product
+      else {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(editId);
+
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // ! We cant use initial value and editing controller both like this
+          // !'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': ''
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -73,8 +114,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_formKey.currentState.validate()) {
       // save the form
       _formKey.currentState.save();
-      //adding  to our list of products
-      Provider.of<Products>(context, listen: false).addProducts(_editedProduct);
+
+      //  means we editing existing product
+      if (_editedProduct.id != null) {
+        //updating  to our list of products
+        Provider.of<Products>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct);
+      }
+      //we need to save new product
+      else {
+        //adding  to our list of products
+        Provider.of<Products>(context, listen: false)
+            .addProducts(_editedProduct);
+      }
+
       // Going back to the previous screen
       Navigator.of(context).pop();
     } else
@@ -105,6 +158,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 decoration: InputDecoration(
                   labelText: "Title",
                 ),
+                //setting initial value
+                initialValue: _initValues['title'],
                 // Shows next button in Soft Keyboard
                 textInputAction: TextInputAction.next,
                 //on pressing next button it will focus price form
@@ -119,6 +174,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     description: _editedProduct.description,
                     price: _editedProduct.price,
                     imageUrl: _editedProduct.imageUrl,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -132,6 +188,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 decoration: InputDecoration(
                   labelText: "Price",
                 ),
+                //setting initial value
+                initialValue: _initValues['price'],
                 // Shows next button in Soft Keyboard
                 textInputAction: TextInputAction.next,
                 //for number keyboard
@@ -147,6 +205,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     description: _editedProduct.description,
                     price: double.parse(value),
                     imageUrl: _editedProduct.imageUrl,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -169,6 +228,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ),
                 // For longer inputs
                 maxLines: 3,
+                //setting initial value
+                initialValue: _initValues['description'],
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 onSaved: (value) {
@@ -178,6 +239,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     description: value,
                     price: _editedProduct.price,
                     imageUrl: _editedProduct.imageUrl,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -220,6 +282,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       decoration: InputDecoration(
                         labelText: 'Image URL',
                       ),
+                      // ! Cant use initialValue & Controller simultaneously
+                      //setting initial value
+                      //initialValue: _initValues['imageUrl'],
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) {
@@ -235,6 +300,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           description: _editedProduct.description,
                           price: _editedProduct.price,
                           imageUrl: value,
+                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                       validator: (value) {
