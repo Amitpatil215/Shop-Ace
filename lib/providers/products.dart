@@ -67,7 +67,8 @@ class Products with ChangeNotifier {
     // we creating products type in json format so /products.json
     const url = 'https://shop-ace.firebaseio.com/products.json';
     // sending a post request for sending data
-    httpUsing.post(
+    httpUsing
+        .post(
       url,
       body: json.encode(
         //as encode can covert map to json passing a map
@@ -79,26 +80,31 @@ class Products with ChangeNotifier {
           'isFavorite': newProduct.isFavorite,
         },
       ),
+    )
+        .then(
+      //future asynchronus functon exicutes once we got an conformation from post
+      (responseValue) {
+        // we have a special key returned by the firebase in name:
+        // using it in place of our id for creating it locally
+        final createProduct = Product(
+          id: json.decode(responseValue.body)['name'],
+          title: newProduct.title,
+          description: newProduct.description,
+          imageUrl: newProduct.imageUrl,
+          price: newProduct.price,
+        );
+
+        //adding product at the end of list
+        _items.add(createProduct);
+
+        // * for begining of the list
+        //_items.insert(0, createProduct);
+
+        // you can print response which shows name: with unique id
+        // print(json.decode(responseValue.body));
+        notifyListeners();
+      },
     );
-
-    // as of now we dont have id in edit_product_screen.dart file where
-    // we creating a product..we gonna create in server in future
-    //so creating temprovery one
-    final createProduct = Product(
-      id: DateTime.now().toString(),
-      title: newProduct.title,
-      description: newProduct.description,
-      imageUrl: newProduct.imageUrl,
-      price: newProduct.price,
-    );
-
-    //adding product at the end of list
-    _items.add(createProduct);
-
-    // * for begining of the list
-    //_items.insert(0, createProduct);
-
-    notifyListeners();
   }
 
   void updateProduct(String id, Product updatedProduct) {
