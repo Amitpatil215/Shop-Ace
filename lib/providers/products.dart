@@ -86,10 +86,15 @@ class Products with ChangeNotifier {
     final productIndex = _items.indexWhere((element) => element.id == id);
     //checking did we really hot the index
     if (productIndex >= 0) {
-    //replacing existing product with new product
+      //replacing existing product with new product
       _items[productIndex] = updatedProduct;
       notifyListeners();
     }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 
   Product findById(String id) {
