@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'product.dart';
+import 'dart:convert'; //for converting our product to JSON format
+import 'package:http/http.dart' as httpUsing;
 
 //mix in use with keyword
 // We getting features all the features of ChangeNotifier
@@ -61,6 +64,23 @@ class Products with ChangeNotifier {
   //so it will create communication channel between data and widget
   //who want to access data
   void addProducts(Product newProduct) {
+    // we creating products type in json format so /products.json
+    const url = 'https://shop-ace.firebaseio.com/products.json';
+    // sending a post request for sending data
+    httpUsing.post(
+      url,
+      body: json.encode(
+        //as encode can covert map to json passing a map
+        {
+          'title': newProduct.title,
+          'description': newProduct.description,
+          'imageUrl': newProduct.imageUrl,
+          'price': newProduct.price,
+          'isFavorite': newProduct.isFavorite,
+        },
+      ),
+    );
+
     // as of now we dont have id in edit_product_screen.dart file where
     // we creating a product..we gonna create in server in future
     //so creating temprovery one
