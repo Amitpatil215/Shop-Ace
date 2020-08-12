@@ -44,11 +44,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   @override
   void dispose() {
+    // ? Should i dispose it or not cause some same
+    // ? it will get disposed once widget closes
     // We need to dispose all our
     // ! Focus Nodes else they will cause memory leak
-    _priceFocusNode.dispose();
-    _descriptionFocusNode.dispose();
-    _imageUrlFocusNode.dispose();
+    // _priceFocusNode.dispose();
+    // _descriptionFocusNode.dispose();
+    // _imageUrlFocusNode.dispose();
     //removing listener before image controller
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _imageUrlController.dispose();
