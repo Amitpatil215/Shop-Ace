@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 //We want to manage user input so using statefulWidget
 class EditProductScreen extends StatefulWidget {
@@ -69,6 +71,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_formKey.currentState.validate()) {
       // save the form
       _formKey.currentState.save();
+      //adding  to our list of products
+      Provider.of<Products>(context, listen: false).addProducts(_editedProduct);
+      // Going back to the previous screen
+      Navigator.of(context).pop();
     } else
       return;
   }

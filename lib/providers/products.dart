@@ -60,8 +60,24 @@ class Products with ChangeNotifier {
   //This class used by provider package
   //so it will create communication channel between data and widget
   //who want to access data
-  void addProducts() {
-    // _items.add(value);
+  void addProducts(Product newProduct) {
+    // as of now we dont have id in edit_product_screen.dart file where
+    // we creating a product..we gonna create in server in future
+    //so creating temprovery one
+    final createProduct = Product(
+      id: DateTime.now().toString(),
+      title: newProduct.title,
+      description: newProduct.description,
+      imageUrl: newProduct.imageUrl,
+      price: newProduct.price,
+    );
+
+    //adding product at the end of list
+    _items.add(createProduct);
+
+    // * for begining of the list
+    //_items.insert(0, createProduct);
+
     notifyListeners();
   }
 
