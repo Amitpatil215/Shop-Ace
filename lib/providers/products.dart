@@ -166,8 +166,33 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-    _items.removeWhere((element) => element.id == id);
+    // we delete product type in json format as well as we wanna target specific id
+    final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+    // storing index of product which we wanna delete
+    final existingProductIndex =
+        _items.indexWhere((element) => element.id == id);
+
+    //Stroring that product in memory i.e. in variable
+    var existingProduct = _items[existingProductIndex];
+
+    //deleting product from list locally
+    _items.removeAt(existingProductIndex);
+
     notifyListeners();
+
+    //deleting product from firebase
+    httpUsing.delete(url).then((value) {
+      //if we removed remotely
+      // setting that variable to null
+      existingProduct = null;
+    }).catchError((error) {
+      //some how if we unable to delete it
+      // inserting it back into our list at same index value
+      //* Approch is known as Optimistic Updating
+      _items.insert(existingProductIndex, existingProduct);
+
+      notifyListeners();
+    });
   }
 
   Product findById(String id) {
