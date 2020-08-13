@@ -17,14 +17,22 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showFavoritesOnly = false;
   var _isInit = false; //Checking did we initiallized products erlier
+  var _isLoading = false; // for showing loading spinner
 
   @override
   void didChangeDependencies() {
     // ! context in initState wont work so using didChangeDependencies
     // it will work if we set listen to false
     if (_isInit == false) {
+      setState(() {
+        _isLoading = true;
+      });
       _isInit = true;
-      Provider.of<Products>(context).fetchAndSetProducts();
+      Provider.of<Products>(context).fetchAndSetProducts().then(
+            (_) => setState(() {
+              _isLoading = false;
+            }),
+          );
     }
     super.didChangeDependencies();
   }
@@ -74,7 +82,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showFavoritesOnly),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            )
+          : ProductsGrid(_showFavoritesOnly),
     );
   }
 }

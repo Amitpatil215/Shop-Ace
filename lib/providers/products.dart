@@ -9,8 +9,9 @@ import 'package:http/http.dart' as httpUsing;
 class Products with ChangeNotifier {
   //list of product in Products class
   //as _items is private it never be accessed by outside of this class
+
   List<Product> _items = [
-    Product(
+    /* Product(
       id: 'p1',
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
@@ -41,7 +42,7 @@ class Products with ChangeNotifier {
       price: 49.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    ),
+    ), */
   ];
 
   //we not going to return above list cause it will give pointer
@@ -66,7 +67,24 @@ class Products with ChangeNotifier {
     try {
       // sending http request to the firebase
       final response = await httpUsing.get(url);
-      print(json.decode(response.body));
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      //For every unique key where key is product id and value is the map of products data
+      extractedData.forEach((key, value) {
+        loadedProducts.add(
+          Product(
+            id: key,
+            title: value['title'],
+            description: value['description'],
+            price: value['price'],
+            imageUrl: value['imageUrl'],
+            isFavorite: value['isFavorite'],
+          ),
+        );
+      });
+      // initillay we have dummy list of products but not we fetching it from firebase
+      _items = loadedProducts;
+      notifyListeners();
     } catch (error) {
       //we can handle this error in widget so throwing it
       throw (error);
