@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as httpUsing;
 import './cart.dart';
 
 class OrderItem {
@@ -28,14 +31,39 @@ class Orders with ChangeNotifier {
   }
 
   //Adding orders from cart
-  void addOrder(List<CartItem> cartProducts, double total) {
+  Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+    const url = 'https://shop-ace.firebaseio.com/orders.json';
+    // storing time cause http may take time some time to load if we initiated it in map directly
+    // so for no delay in actul time
+    final timeStamp = DateTime.now();
+    final response = await httpUsing.post(
+      url,
+      body: json.encode(
+        {
+          'amount': total,
+          'dateTime': timeStamp
+              .toIso8601String(), // easy to convertable to dart when decoding
+          'products': cartProducts.map((everyCartProduct) {
+            //maping cartproducts to list products
+            return {
+              'id': everyCartProduct.id,
+              'title': everyCartProduct.title,
+              'quantity': everyCartProduct.quantity,
+              'price': everyCartProduct.price,
+            };
+          }).toList()
+        },
+      ),
+    );
+
     _orders.insert(
       0,
       OrderItem(
-        id: DateTime.now().toString(),
+        //using auto generated id for the order from firebase
+        id: json.decode(response.body)['name'],
         amount: total,
         products: cartProducts,
-        dateTime: DateTime.now(),
+        dateTime: timeStamp,
       ),
     );
     notifyListeners();
