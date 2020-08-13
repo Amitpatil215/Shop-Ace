@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import '../exception/http_error.dart';
 import 'product.dart';
 import 'dart:convert'; //for converting our product to JSON format
 import 'package:http/http.dart' as httpUsing;
@@ -182,6 +183,10 @@ class Products with ChangeNotifier {
 
     //deleting product from firebase
     httpUsing.delete(url).then((value) {
+      if (value.statusCode >= 400) {
+        //status code > 400 throw error if something is wrong
+        throw HttpException(message: 'Could Not Delete Product');
+      }
       //if we removed remotely
       // setting that variable to null
       existingProduct = null;
