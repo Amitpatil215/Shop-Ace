@@ -111,7 +111,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     setState(() {
       _isLoading = true;
     });
@@ -134,11 +134,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       }
       //we need to save new product
       else {
-        //adding  to our list of products
-        Provider.of<Products>(context, listen: false)
-            .addProducts(_editedProduct)
-            .catchError((errorMessege) {
-          return showDialog<Null>(
+        try {
+          //adding  to our list of products
+          await Provider.of<Products>(context, listen: false)
+              .addProducts(_editedProduct);
+        } catch (error) {
+          await showDialog(
               //we returning future of showDialog with value of Null
               context: context,
               builder: (ctx) {
@@ -154,14 +155,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ],
                 );
               });
-        }).then((value) {
+          //finally includes code which must be exicuted after try and catch
+        } finally {
           // Going back to the previous screen
           // data stored in database as well as in provider
           setState(() {
             _isLoading = false;
           });
           Navigator.of(context).pop();
-        });
+        }
       }
     } else
       return;
