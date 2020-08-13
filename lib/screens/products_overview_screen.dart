@@ -5,6 +5,7 @@ import '../screens/cart_screen.dart';
 import '../providers/cart.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
+import '../providers/products.dart';
 
 enum FilterOptions { Favorites, All }
 
@@ -15,6 +16,18 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showFavoritesOnly = false;
+  var _isInit = false; //Checking did we initiallized products erlier
+
+  @override
+  void didChangeDependencies() {
+    // ! context in initState wont work so using didChangeDependencies
+    // it will work if we set listen to false
+    if (_isInit == false) {
+      _isInit = true;
+      Provider.of<Products>(context).fetchAndSetProducts();
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {

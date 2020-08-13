@@ -60,6 +60,19 @@ class Products with ChangeNotifier {
     return _items.where((element) => element.isFavorite).toList();
   }
 
+//Getting products from firebase
+  Future<void> fetchAndSetProducts() async {
+    const url = 'https://shop-ace.firebaseio.com/products.json';
+    try {
+      // sending http request to the firebase
+      final response = await httpUsing.get(url);
+      print(json.decode(response.body));
+    } catch (error) {
+      //we can handle this error in widget so throwing it
+      throw (error);
+    }
+  }
+
   //This class used by provider package
   //so it will create communication channel between data and widget
   //who want to access data
