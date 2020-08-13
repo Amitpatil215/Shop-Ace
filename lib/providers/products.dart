@@ -166,38 +166,43 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
-    // we delete product type in json format as well as we wanna target specific id
-    final url = 'https://shop-ace.firebaseio.com/products/$id.json';
-    // storing index of product which we wanna delete
-    final existingProductIndex =
-        _items.indexWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    try {
+      // we delete product type in json format as well as we wanna target specific id
+      final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+      // storing index of product which we wanna delete
+      final existingProductIndex =
+          _items.indexWhere((element) => element.id == id);
 
-    //Stroring that product in memory i.e. in variable
-    var existingProduct = _items[existingProductIndex];
+      //Stroring that product in memory i.e. in variable
+      var existingProduct = _items[existingProductIndex];
 
-    //deleting product from list locally
-    _items.removeAt(existingProductIndex);
-
-    notifyListeners();
-
-    //deleting product from firebase
-    httpUsing.delete(url).then((value) {
-      if (value.statusCode >= 400) {
-        //status code > 400 throw error if something is wrong
-        throw HttpException(message: 'Could Not Delete Product');
-      }
-      //if we removed remotely
-      // setting that variable to null
-      existingProduct = null;
-    }).catchError((error) {
-      //some how if we unable to delete it
-      // inserting it back into our list at same index value
-      //* Approch is known as Optimistic Updating
-      _items.insert(existingProductIndex, existingProduct);
-
+      //deleting product from list locally
+      _items.removeAt(existingProductIndex);
       notifyListeners();
-    });
+
+      //deleting product from firebase
+      final response = await httpUsing.delete(url);
+      if (response.statusCode >= 400) {
+        //some how if we unable to delete it
+        // inserting it back into our list at same index value
+        //* Approch is known as Optimistic Updating
+        _items.insert(existingProductIndex, existingProduct);
+
+        notifyListeners();
+
+        //status code > 400 throw error if something is wrong
+        // ! delete never throw error if not successfull so manually doing
+        throw HttpException(message: 'Could Not Delete Product');
+      } else {
+        //if we removed remotely
+        // setting that variable to null
+        existingProduct = null;
+      }
+    } catch (error) {
+      //throwing error again to show snackbar in the widget
+      throw (error);
+    }
   }
 
   Product findById(String id) {

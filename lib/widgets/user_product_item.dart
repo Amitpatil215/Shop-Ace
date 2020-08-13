@@ -12,6 +12,9 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //scaffold context in variable to use in future methods where we cant use context
+    final scaffoldVariable = Scaffold.of(context);
+    final themeContextVariable = Theme.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -37,8 +40,28 @@ class UserProductItem extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.delete),
               color: Theme.of(context).errorColor,
-              onPressed: () {
-                deleteProduct(id);
+              onPressed: () async {
+                try {
+                  await deleteProduct(id);
+                  scaffoldVariable.showSnackBar(
+                    SnackBar(
+                      content: Text("Succesfully Deleted!"),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } catch (error) {
+                  // ! we can not use context in future i.e. in await
+                  //Scaffold.of(context).showSnackBar()
+                  // by using variable in build method we resolved issue
+                  scaffoldVariable.showSnackBar(
+                    SnackBar(
+                      content: Text("Deleting Failed !"),
+                      backgroundColor: themeContextVariable.errorColor,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
               },
             ),
           ],
