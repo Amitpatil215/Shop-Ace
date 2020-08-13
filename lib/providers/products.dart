@@ -63,55 +63,54 @@ class Products with ChangeNotifier {
   //This class used by provider package
   //so it will create communication channel between data and widget
   //who want to access data
-
   // function return future
-  Future<void> addProducts(Product newProduct) {
+  Future<void> addProducts(Product newProduct) async {
     // we creating products type in json format so /products.json
     const url = 'https://shop-ace.firebaseio.com/products.json';
-    // sending a post request for sending data
-    return httpUsing
-        .post(
-      url,
-      body: json.encode(
-        //as encode can covert map to json passing a map
-        {
-          'title': newProduct.title,
-          'description': newProduct.description,
-          'imageUrl': newProduct.imageUrl,
-          'price': newProduct.price,
-          'isFavorite': newProduct.isFavorite,
-        },
-      ),
-    )
-        .then(
-      //future asynchronus functon exicutes once we got an conformation from post
-      (responseValue) {
-        // we have a special key returned by the firebase in name:
-        // using it in place of our id for creating it locally
-        final createProduct = Product(
+    try {
+      //we trying in try{} to run code if not run then it throws error in catch{}
+      // sending a post request for sending data
+      //now we dont need to return cause async returns future automatically
+      // await says wait till this code runs
+      final responseValue = await httpUsing.post(
+        url,
+        body: json.encode(
+          //as encode can covert map to json passing a map
+          {
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+            'isFavorite': newProduct.isFavorite,
+          },
+        ),
+      );
+
+      // we have a special key returned by the firebase in name:
+      // using it in place of our id for creating it locally
+      final createProduct = Product(
           id: json.decode(responseValue.body)['name'],
           title: newProduct.title,
           description: newProduct.description,
           imageUrl: newProduct.imageUrl,
           price: newProduct.price,
-        );
+          isFavorite: newProduct.isFavorite);
 
-        //adding product at the end of list
-        _items.add(createProduct);
+      //adding product at the end of list
+      _items.add(createProduct);
 
-        // * for begining of the list
-        //_items.insert(0, createProduct);
+      // * for begining of the list
+      //_items.insert(0, createProduct);
 
-        // you can print response which shows name: with unique id
-        // print(json.decode(responseValue.body));
-        notifyListeners();
-      },
+      // you can print response which shows name: with unique id
+      // print(json.decode(responseValue.body));
+      notifyListeners();
+    } catch (errorMessege) {
       //In case we got an error  we should handle it
       //else our app may crash
-    ).catchError((errorMessage) {
       //we wanna handle this error in the edit product screen
-      throw errorMessage;
-    });
+      throw errorMessege;
+    }
   }
 
   void updateProduct(String id, Product updatedProduct) {
