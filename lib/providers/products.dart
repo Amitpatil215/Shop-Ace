@@ -106,7 +106,12 @@ class Products with ChangeNotifier {
         // print(json.decode(responseValue.body));
         notifyListeners();
       },
-    );
+      //In case we got an error  we should handle it
+      //else our app may crash
+    ).catchError((errorMessage) {
+      //we wanna handle this error in the edit product screen
+      throw errorMessage;
+    });
   }
 
   void updateProduct(String id, Product updatedProduct) {

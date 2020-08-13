@@ -137,7 +137,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
         //adding  to our list of products
         Provider.of<Products>(context, listen: false)
             .addProducts(_editedProduct)
-            .then((value) {
+            .catchError((errorMessege) {
+          return showDialog<Null>(
+              //we returning future of showDialog with value of Null
+              context: context,
+              builder: (ctx) {
+                return AlertDialog(
+                  title: Text("Error Occured!"),
+                  content: Text("Something Went Wrong"),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Okay"))
+                  ],
+                );
+              });
+        }).then((value) {
           // Going back to the previous screen
           // data stored in database as well as in provider
           setState(() {
