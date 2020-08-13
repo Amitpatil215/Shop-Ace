@@ -144,11 +144,21 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product updatedProduct) {
+  Future updateProduct(String id, Product updatedProduct) async {
     //We getting index of product which we wanna edit
     final productIndex = _items.indexWhere((element) => element.id == id);
     //checking did we really hot the index
     if (productIndex >= 0) {
+      // we updating products type in json format as well as we wanna target specific id
+      final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+      // patch merges existing data with data we are sending it to
+      await httpUsing.patch(url,
+          body: json.encode({
+            'title': updatedProduct.title,
+            'description': updatedProduct.description,
+            'imageUrl': updatedProduct.imageUrl,
+            'price': updatedProduct.price,
+          }));
       //replacing existing product with new product
       _items[productIndex] = updatedProduct;
       notifyListeners();
