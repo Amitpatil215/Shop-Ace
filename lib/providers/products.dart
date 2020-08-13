@@ -63,11 +63,13 @@ class Products with ChangeNotifier {
   //This class used by provider package
   //so it will create communication channel between data and widget
   //who want to access data
-  void addProducts(Product newProduct) {
+
+  // function return future
+  Future<void> addProducts(Product newProduct) {
     // we creating products type in json format so /products.json
     const url = 'https://shop-ace.firebaseio.com/products.json';
     // sending a post request for sending data
-    httpUsing
+    return httpUsing
         .post(
       url,
       body: json.encode(
