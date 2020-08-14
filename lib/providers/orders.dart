@@ -30,6 +30,38 @@ class Orders with ChangeNotifier {
     // due to this outside of class we cant acess the orders
   }
 
+  Future<void> fetchAndSetOrders() async {
+    const url = 'https://shop-ace.firebaseio.com/orders.json';
+    final response = await httpUsing.get(url);
+    if (response == null) {
+      //if we dont have any orders then simply return
+      //no code execution further
+      return;
+    }
+    final List<OrderItem> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    extractedData.forEach((key, value) {
+      loadedOrders.add(
+        OrderItem(
+          id: key,
+          amount: value['amount'],
+          dateTime: DateTime.parse(value['dateTime']),
+          products: (value['products'] as List<dynamic>).map((eachListItem) {
+            return CartItem(
+              id: eachListItem['id'],
+              title: eachListItem['title'],
+              quantity: eachListItem['quantity'],
+              price: eachListItem['price'],
+            );
+          }).toList(),
+        ),
+      );
+    });
+    _orders = loadedOrders.reversed
+        .toList(); //reversed for showing latest orders on top
+    notifyListeners();
+  }
+
   //Adding orders from cart
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     const url = 'https://shop-ace.firebaseio.com/orders.json';
