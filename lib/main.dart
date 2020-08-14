@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'providers/auth.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/user_product_screen.dart';
 import 'screens/orders_screen.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
     //for using multiple providers
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(
+          value: Auth(),
+        ),
         ChangeNotifierProvider.value(
           // if our value is not depend on context then we use
           // .value constructor
