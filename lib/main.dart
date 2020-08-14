@@ -9,6 +9,7 @@ import 'providers/cart.dart';
 import 'screens/product_detail_screen.dart';
 import 'screens/products_overview_screen.dart';
 import 'providers/products.dart';
+import 'screens/auth_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.deepOrange,
           fontFamily: 'GoogleSans',
         ),
-        home: ProductOverviewScreen(),
+        home: AuthScreen(),
         routes: {
           ProductDetailScreen.routeName: (ctx) {
             return ProductDetailScreen();
