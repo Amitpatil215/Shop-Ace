@@ -10,6 +10,23 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate; //expiration time of that token
   String _userID;
 
+  bool get isAuthenticated {
+    return token != null;
+    //we getting token from getter which locally validate
+    // that means we are authenticated
+  }
+
+  String get token {
+    if (_token != null &&
+        _expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now())) {
+      // if expiry date is further that current time our token is valid
+      return _token;
+    } else {
+      return null;
+    }
+  }
+
   Future<void> _authenticate(
       {String email, String password, String urlSegment}) async {
     final url =
@@ -29,6 +46,13 @@ class Auth with ChangeNotifier {
       if (responseData['error'] != null) {
         throw HttpException(message: responseData['error']['message']);
       }
+      // if we dont have error then setting up to the properties
+      _token = responseData['idToken'];
+      _userID = responseData['localId'];
+      _expiryDate = DateTime.now()
+          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      //adding seconds to current time will give us the time when token expires
+      notifyListeners();
     } catch (error) {
       print(json);
       throw error;
