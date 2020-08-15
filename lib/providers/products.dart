@@ -104,7 +104,7 @@ class Products with ChangeNotifier {
   // function return future
   Future<void> addProducts(Product newProduct) async {
     // we creating products type in json format so /products.json
-    const url = 'https://shop-ace.firebaseio.com/products.json';
+    final url = 'https://shop-ace.firebaseio.com/products.json?auth=$authToken';
     try {
       //we trying in try{} to run code if not run then it throws error in catch{}
       // sending a post request for sending data
@@ -157,7 +157,8 @@ class Products with ChangeNotifier {
     //checking did we really hot the index
     if (productIndex >= 0) {
       // we updating products type in json format as well as we wanna target specific id
-      final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+      final url =
+          'https://shop-ace.firebaseio.com/products/$id.json?auth=$authToken';
       // patch merges existing data with data we are sending it to
       await httpUsing.patch(url,
           body: json.encode({
@@ -175,7 +176,8 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     try {
       // we delete product type in json format as well as we wanna target specific id
-      final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+      final url =
+          'https://shop-ace.firebaseio.com/products/$id.json?auth=$authToken';
       // storing index of product which we wanna delete
       final existingProductIndex =
           _items.indexWhere((element) => element.id == id);

@@ -22,7 +22,9 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String authToken;
 
+  Orders(this.authToken, this._orders);
   // getter for returning order items List
   List<OrderItem> get orders {
     return [..._orders];
@@ -31,7 +33,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
-    const url = 'https://shop-ace.firebaseio.com/orders.json';
+    final url = 'https://shop-ace.firebaseio.com/orders.json?auth=$authToken';
     final response = await httpUsing.get(url);
     if (response == null) {
       //if we dont have any orders then simply return

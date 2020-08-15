@@ -21,13 +21,14 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String authToken) async {
     //setting old Status of is favourite ,using Optimistic update
     var oldFavStatus = isFavorite;
     //  if value is true it it make false nd voice versa
     isFavorite = !isFavorite;
     notifyListeners();
-    final url = 'https://shop-ace.firebaseio.com/products/$id.json';
+    final url =
+        'https://shop-ace.firebaseio.com/products/$id.json?auth=$authToken';
     try {
       final response = await httpUsing.patch(
         url,

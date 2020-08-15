@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
@@ -11,6 +12,7 @@ class ProductItem extends StatelessWidget {
     //we not listening here cause we want title only once
     final eachProduct = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authToken = Provider.of<Auth>(context, listen: false).token;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -45,7 +47,7 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                 ),
                 onPressed: () {
-                  eachProduct.toggleFavoriteStatus();
+                  eachProduct.toggleFavoriteStatus(authToken);
                 },
               ),
             ),
