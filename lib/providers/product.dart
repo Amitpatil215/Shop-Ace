@@ -21,18 +21,20 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus(String authToken) async {
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
     //setting old Status of is favourite ,using Optimistic update
     var oldFavStatus = isFavorite;
     //  if value is true it it make false nd voice versa
     isFavorite = !isFavorite;
     notifyListeners();
     final url =
-        'https://shop-ace.firebaseio.com/products/$id.json?auth=$authToken';
+        'https://shop-ace.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
     try {
-      final response = await httpUsing.patch(
+      //as we only sending one value we dont need to send a map
+      // so if there already product exist then it will replace else create
+      final response = await httpUsing.put(
         url,
-        body: json.encode({'isFavorite': isFavorite}),
+        body: json.encode(isFavorite),
       );
       if (response.statusCode >= 400) {
         throw HttpException();

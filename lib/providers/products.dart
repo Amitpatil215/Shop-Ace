@@ -10,9 +10,10 @@ import 'package:http/http.dart' as httpUsing;
 class Products with ChangeNotifier {
   // we wanna token to pass in utl
   final String authToken;
+  final String userId;
 //in constructor we passing old state of provider so initializing _items
 // otherwise we will loose that
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
   //list of product in Products class
   //as _items is private it never be accessed by outside of this class
 
@@ -75,6 +76,13 @@ class Products with ChangeNotifier {
       // sending http request to the firebase
       final response = await httpUsing.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      final favouriteResponse = await httpUsing.get(
+          'https://shop-ace.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
+      // as a response we getting all product id and bool for its isfav status
+
+      final extractedFavoriteData = json.decode(favouriteResponse.body);
+
       final List<Product> loadedProducts = [];
       //For every unique key where key is product id and value is the map of products data
       extractedData.forEach((key, value) {
@@ -85,7 +93,11 @@ class Products with ChangeNotifier {
             description: value['description'],
             price: value['price'],
             imageUrl: value['imageUrl'],
-            isFavorite: value['isFavorite'],
+            isFavorite: extractedFavoriteData == null
+                ? false
+                : extractedFavoriteData[key] ?? false,
+            //if no status available setting it to false
+            // ?? checks does its previous value is null then it is false
           ),
         );
       });

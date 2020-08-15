@@ -13,6 +13,7 @@ class ProductItem extends StatelessWidget {
     final eachProduct = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     final authToken = Provider.of<Auth>(context, listen: false).token;
+    final authUserId = Provider.of<Auth>(context, listen: false).userId;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -47,7 +48,7 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                 ),
                 onPressed: () {
-                  eachProduct.toggleFavoriteStatus(authToken);
+                  eachProduct.toggleFavoriteStatus(authToken, authUserId);
                 },
               ),
             ),

@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
           update: (context, authObject, previousState) => Products(
               //Passing token and list of items
               authObject.token,
+              authObject.userId,
               //previousState.items, we cant pass like this cause
               //it can be null when initillay app started so
               // passing empty if nothing found elese list will be passed

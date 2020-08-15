@@ -16,6 +16,10 @@ class Auth with ChangeNotifier {
     // that means we are authenticated
   }
 
+  String get userId {
+    return _userID;
+  }
+
   String get token {
     if (_token != null &&
         _expiryDate != null &&
