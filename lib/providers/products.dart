@@ -8,6 +8,11 @@ import 'package:http/http.dart' as httpUsing;
 //mix in use with keyword
 // We getting features all the features of ChangeNotifier
 class Products with ChangeNotifier {
+  // we wanna token to pass in utl
+  final String authToken;
+//in constructor we passing old state of provider so initializing _items
+// otherwise we will loose that
+  Products(this.authToken, this._items);
   //list of product in Products class
   //as _items is private it never be accessed by outside of this class
 
@@ -64,7 +69,8 @@ class Products with ChangeNotifier {
 
 //Getting products from firebase
   Future<void> fetchAndSetProducts() async {
-    const url = 'https://shop-ace.firebaseio.com/products.json';
+    final url = 'https://shop-ace.firebaseio.com/products.json?auth=$authToken';
+    //attaching token to outgoing http request
     try {
       // sending http request to the firebase
       final response = await httpUsing.get(url);

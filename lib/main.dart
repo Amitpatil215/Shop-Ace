@@ -25,10 +25,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
+        /*
         ChangeNotifierProvider.value(
-          // if our value is not depend on context then we use
-          // .value constructor
-          // avoid using .value if ur instantiating a new class like
+          /// if our value is not depend on context then we use
+          /// .value constructor
+          /// avoid using .value if ur instantiating a new class like
           value: Products(),
           /*
          it is mainly used in list and grid view
@@ -36,6 +37,20 @@ class MyApp extends StatelessWidget {
          in case we delete a item in a list then flutter will not destroy
          widget instead of it will reassign the same basic structure
           */
+        ),
+        */
+        // we wanna pass token from Auth() to ProductsOverview() so using
+        // it dependes on the provider provided before this i.e auth()
+        //<type of data u depend on , type of data u wanna provide>
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: null,
+          update: (context, authObject, previousState) => Products(
+              //Passing token and list of items
+              authObject.token,
+              //previousState.items, we cant pass like this cause
+              //it can be null when initillay app started so
+              // passing empty if nothing found elese list will be passed
+              previousState == null ? [] : previousState.items),
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
