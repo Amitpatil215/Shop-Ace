@@ -74,7 +74,24 @@ class MyApp extends StatelessWidget {
           ),
           home: authObject.isAuthenticated
               ? ProductOverviewScreen()
-              : AuthScreen(),
+              // if not authenticated i wanna try loging in automatically
+              // so using future till that time i will show progress indicator
+              : FutureBuilder(
+                  // trying auto login
+                  // if we logged in successfully then auth rebuilds due to notifyListeners()
+                  // and our build reruns and we end up in product overview screen
+                  future: authObject.tryAutoLogin(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      // if we are unable to log in then show authentication screen
+                      return AuthScreen();
+                    }
+                  },
+                ),
           routes: {
             ProductDetailScreen.routeName: (ctx) {
               return ProductDetailScreen();

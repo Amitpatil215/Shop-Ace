@@ -48,6 +48,9 @@ class AppDrawer extends StatelessWidget {
               Provider.of<Auth>(context, listen: false).logOut();
               // close drower
               Navigator.of(context).pop();
+              // we making sure that we must go to main route
+              // so that our authentication logic always runs
+              Navigator.of(context).pushReplacementNamed('/');
             },
           ),
         ],
