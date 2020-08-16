@@ -23,8 +23,8 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
   final String authToken;
-
-  Orders(this.authToken, this._orders);
+  final String userId;
+  Orders(this.authToken, this.userId, this._orders);
   // getter for returning order items List
   List<OrderItem> get orders {
     return [..._orders];
@@ -33,7 +33,9 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = 'https://shop-ace.firebaseio.com/orders.json?auth=$authToken';
+    final url =
+        'https://shop-ace.firebaseio.com/orders/$userId.json?auth=$authToken';
+    //is orders there is subfolder of user id for a specific user
     final response = await httpUsing.get(url);
     if (response == null) {
       //if we dont have any orders then simply return
@@ -66,7 +68,9 @@ class Orders with ChangeNotifier {
 
   //Adding orders from cart
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url = 'https://shop-ace.firebaseio.com/orders.json';
+    final url =
+        'https://shop-ace.firebaseio.com/orders/$userId.json?auth=$authToken';
+    //is orders there is subfolder of user id for a specific user
     // storing time cause http may take time some time to load if we initiated it in map directly
     // so for no delay in actul time
     final timeStamp = DateTime.now();
