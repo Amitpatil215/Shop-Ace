@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:async'; // for timer purpose auto log out
 import 'api_key.dart' as ApiSecretKey;
 import '../exception/http_error.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +9,7 @@ class Auth with ChangeNotifier {
   String _token; //token expires after one hour in firebase
   DateTime _expiryDate; //expiration time of that token
   String _userID;
+  Timer _authTimer;
 
   bool get isAuthenticated {
     return token != null;
@@ -56,6 +57,9 @@ class Auth with ChangeNotifier {
       _expiryDate = DateTime.now()
           .add(Duration(seconds: int.parse(responseData['expiresIn'])));
       //adding seconds to current time will give us the time when token expires
+
+      // setting auto log out feature once user log in
+      _autoLogout();
       notifyListeners();
     } catch (error) {
       print(json);
@@ -83,9 +87,31 @@ class Auth with ChangeNotifier {
     _token = null;
     _expiryDate = null;
     _token = null;
+    if (_authTimer != null) {
+      _authTimer.cancel();
+      _authTimer = null;
+    }
     notifyListeners();
     // when we notifi this to provider
     // in main home : where we check is authenticated or not then it will
     //return a false so we render AuthScreeen() in front
+  }
+
+  // * automatically log out when token expires
+  void _autoLogout() {
+    if (_authTimer != null) {
+      // if we have existing timer then cancel it first
+      _authTimer.cancel();
+    }
+
+    // difference between expiry time and current time
+    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+    // first argument when it expires
+    // second argument what should happen after that
+    // timer exicutes method once its time expires
+    _authTimer = Timer(
+      Duration(seconds: timeToExpiry),
+      logOut,
+    );
   }
 }
