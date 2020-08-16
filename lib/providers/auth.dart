@@ -78,4 +78,14 @@ class Auth with ChangeNotifier {
       urlSegment: "signInWithPassword",
     );
   }
+
+  void logOut() {
+    _token = null;
+    _expiryDate = null;
+    _token = null;
+    notifyListeners();
+    // when we notifi this to provider
+    // in main home : where we check is authenticated or not then it will
+    //return a false so we render AuthScreeen() in front
+  }
 }
