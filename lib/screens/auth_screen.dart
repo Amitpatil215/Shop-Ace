@@ -127,14 +127,11 @@ class _AuthCardState extends State<AuthCard>
         curve: Curves.easeIn, // how the duration time split
       ),
     );
-    // setting state for updating our screen
-    _heightAnimation.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
   void dispose() {
+    // TODO: implement dispose
     super.dispose();
     _animationController.dispose();
   }
@@ -227,16 +224,20 @@ class _AuthCardState extends State<AuthCard>
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 8.0,
-      child: Container(
-        //height: _authMode == AuthMode.Signup ? 320 : 260,
-        //  for animation chaning  to
-        height: _heightAnimation.value.height,
-        constraints:
-            // BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
-            // for animation chaning to
-            BoxConstraints(minHeight: _heightAnimation.value.height),
-        width: deviceSize.width * 0.75,
-        padding: EdgeInsets.all(16.0),
+      child: AnimatedBuilder(
+        animation: _heightAnimation,
+        builder: (context, chiiild) => Container(
+          //height: _authMode == AuthMode.Signup ? 320 : 260,
+          //  for animation chaning  to
+          height: _heightAnimation.value.height,
+          constraints:
+              // BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+              // for animation chaning to
+              BoxConstraints(minHeight: _heightAnimation.value.height),
+          width: deviceSize.width * 0.75,
+          padding: EdgeInsets.all(16.0),
+          child: chiiild,
+        ),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
