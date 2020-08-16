@@ -69,9 +69,15 @@ class Products with ChangeNotifier {
   }
 
 //Getting products from firebase
-  Future<void> fetchAndSetProducts() async {
-    final url = 'https://shop-ace.firebaseio.com/products.json?auth=$authToken';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    // filter by user is optional parameter if passed then we gonna filtering it out
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    final url =
+        'https://shop-ace.firebaseio.com/products.json?auth=$authToken&$filterString';
     //attaching token to outgoing http request
+    // by adding & we can filter out products to a specific user who is logged in
+    // by filtering by creator id which is equal to userId
     try {
       // sending http request to the firebase
       final response = await httpUsing.get(url);
@@ -131,7 +137,8 @@ class Products with ChangeNotifier {
             'description': newProduct.description,
             'imageUrl': newProduct.imageUrl,
             'price': newProduct.price,
-            'isFavorite': newProduct.isFavorite,
+            'creatorId': userId,
+            //specifing every new product to specific user i.e creator
           },
         ),
       );
