@@ -24,12 +24,15 @@ class ProductItem extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: GridTile(
-          child: FadeInImage(
-            placeholder: AssetImage(
-              'assets/images/product-placeholder.png',
+          child: Hero(
+            tag: eachProduct.id,
+            child: FadeInImage(
+              placeholder: AssetImage(
+                'assets/images/product-placeholder.png',
+              ),
+              image: NetworkImage(eachProduct.imageUrl),
+              fit: BoxFit.cover,
             ),
-            image: NetworkImage(eachProduct.imageUrl),
-            fit: BoxFit.cover,
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
